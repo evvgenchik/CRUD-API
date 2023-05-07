@@ -1,5 +1,7 @@
 import http from 'http';
 import * as dotenv from 'dotenv';
+import getRequest from './methods/get.js';
+import users from './data/data.json' assert { type: 'json' };
 dotenv.config();
 
 const PORT = process.env.PORT || 5001;
@@ -7,6 +9,7 @@ const PORT = process.env.PORT || 5001;
 const server = http.createServer((req, res) => {
   switch (req.method) {
     case 'GET':
+      getRequest(req, res);
       break;
     case 'POST':
       break;
