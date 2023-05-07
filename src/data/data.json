@@ -1,20 +1,14 @@
 [
   {
-    "id": "f8457ddc-52c2-4b2d-b5f1-f90f6353c928",
-    "username": "barto",
-    "age": 23,
-    "hobbies": "gym"
-  },
-  {
-    "id": "efe773d0-26a0-49bc-a3c9-ace333f3b7f4",
-    "username": "evgen",
-    "age": 24,
-    "hobbies": "code"
-  },
-  {
-    "id": "f8457ddc-52c2-4b2d-b5f1-f90f6353c928",
+    "id": "9a33b908-1678-4cfe-b026-2f4b87afa2d3",
     "username": "barto",
     "age": 23,
     "hobbies": ["gym"]
+  },
+  {
+    "username": "evg",
+    "age": 23,
+    "hobbies": ["code", "gym", "books"],
+    "id": "efe773d0-26a0-49bc-a3c9-ace333f3b7f4"
   }
 ]

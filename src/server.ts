@@ -3,6 +3,7 @@ import * as dotenv from 'dotenv';
 import getRequest from './methods/get.js';
 import postRequest from './methods/post.js';
 import users from './data/data.json' assert { type: 'json' };
+import putRequest from './methods/put.js';
 dotenv.config();
 
 const PORT = process.env.PORT || 5001;
@@ -16,6 +17,7 @@ const server = http.createServer((req, res) => {
       postRequest(req, res);
       break;
     case 'PUT':
+      putRequest(req, res);
       break;
     case 'DELETE':
       break;
