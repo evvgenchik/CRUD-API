@@ -10,5 +10,11 @@
     "username": "evgen",
     "age": 24,
     "hobbies": "code"
+  },
+  {
+    "id": "f8457ddc-52c2-4b2d-b5f1-f90f6353c928",
+    "username": "barto",
+    "age": 23,
+    "hobbies": ["gym"]
   }
 ]

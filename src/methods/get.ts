@@ -1,11 +1,10 @@
 import users from '../data/data.json' assert { type: 'json' };
-import { v4 as uuidv4 } from 'uuid';
 import { parseUrl, isUuidCorrect } from '../utils/helper.js';
 
 const getRequest = (req, res) => {
   const { baseUrl, id } = parseUrl(req.url);
 
-  if (req.url === 'api/users') {
+  if (req.url === '/api/users') {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
     res.write(JSON.stringify(users));

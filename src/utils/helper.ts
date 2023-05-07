@@ -12,4 +12,10 @@ const isUuidCorrect = (id: string) => {
   return v4.test(id);
 };
 
-export { parseUrl, isUuidCorrect };
+const validate = (object, schema) => {
+  return Object.keys(schema)
+    .filter((key) => !schema[key](object[key]))
+    .map((key) => `field ${key} is invalid.`);
+};
+
+export { parseUrl, isUuidCorrect, validate };

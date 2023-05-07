@@ -1,6 +1,7 @@
 import http from 'http';
 import * as dotenv from 'dotenv';
 import getRequest from './methods/get.js';
+import postRequest from './methods/post.js';
 import users from './data/data.json' assert { type: 'json' };
 dotenv.config();
 
@@ -12,6 +13,7 @@ const server = http.createServer((req, res) => {
       getRequest(req, res);
       break;
     case 'POST':
+      postRequest(req, res);
       break;
     case 'PUT':
       break;
