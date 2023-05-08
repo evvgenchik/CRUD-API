@@ -1,6 +1,5 @@
 import { isUuidCorrect, parseUrl, validate } from '../utils/helper.js';
 import userSchema from '../schema/schema.js';
-import fileRecorder from '../utils/fileRecorder.js';
 import parser from '../utils/parser.js';
 import { IUser } from '../utils/types.js';
 
@@ -10,7 +9,6 @@ const putRequest = async (req, res, users) => {
   if (baseUrl === '/api/users') {
     if (isUuidCorrect(id)) {
       const userLookingIndx = users.findIndex((user) => user.id === id);
-      console.log(userLookingIndx);
 
       if (userLookingIndx !== -1) {
         const newUser = (await parser(req)) as IUser;

@@ -25,24 +25,30 @@ const DB: usersDB = [
 ];
 
 const server = http.createServer((req, res) => {
-  switch (req.method) {
-    case 'GET':
-      getRequest(req, res, DB);
-      break;
-    case 'POST':
-      postRequest(req, res, DB);
-      break;
-    case 'PUT':
-      putRequest(req, res, DB);
-      break;
-    case 'DELETE':
-      deleteRequest(req, res, DB);
-      break;
-    default:
-      res.statusCode = 404;
-      res.setHeader('Content-Type', 'application/json');
-      res.write(JSON.stringify({ title: 'Not found', message: 'Route not found' }));
-      res.end();
+  try {
+    switch (req.method) {
+      case 'GET':
+        getRequest(req, res, DB);
+        break;
+      case 'POST':
+        postRequest(req, res, DB);
+        break;
+      case 'PUT':
+        putRequest(req, res, DB);
+        break;
+      case 'DELETE':
+        deleteRequest(req, res, DB);
+        break;
+      default:
+        res.statusCode = 404;
+        res.setHeader('Content-Type', 'application/json');
+        res.write(JSON.stringify({ title: 'No such endpoint', message: 'Route not found' }));
+        res.end();
+    }
+  } catch (err) {
+    res.statusCode = 500;
+    res.write(JSON.stringify({ message: 'Server error' }));
+    res.end();
   }
 });
 
