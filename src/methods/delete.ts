@@ -2,6 +2,7 @@ import { isUuidCorrect, parseUrl } from '../utils/helper.js';
 
 const deleteRequest = (req, res, users) => {
   const { baseUrl, id } = parseUrl(req.url);
+
   if (baseUrl === '/api/users') {
     if (isUuidCorrect(id)) {
       const userLookingIndx = users.findIndex((user) => user.id === id);
