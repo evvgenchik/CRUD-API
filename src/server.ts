@@ -2,11 +2,13 @@ import http from 'http';
 import * as dotenv from 'dotenv';
 import getRequest from './methods/get.js';
 import postRequest from './methods/post.js';
-import users from './data/data.json' assert { type: 'json' };
 import putRequest from './methods/put.js';
+import deleteRequest from './methods/delete.js';
 dotenv.config();
 
 const PORT = process.env.PORT || 5001;
+
+const DB = [];
 
 const server = http.createServer((req, res) => {
   switch (req.method) {
@@ -20,6 +22,7 @@ const server = http.createServer((req, res) => {
       putRequest(req, res);
       break;
     case 'DELETE':
+      deleteRequest(req, res);
       break;
     default:
       res.statusCode = 404;

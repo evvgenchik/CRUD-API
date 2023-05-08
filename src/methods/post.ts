@@ -14,6 +14,8 @@ const postRequest = async (req, res) => {
 
     if (!errors.length) {
       const user = Object.assign(newUser, { id: uuidv4() });
+      console.log(user);
+
       fileRecorder([...users, user]);
 
       res.statusCode = 201;

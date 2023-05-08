@@ -5,4 +5,6 @@ interface IUser {
   hobbies: string[];
 }
 
-export { IUser };
+type DB = IUser[];
+
+export { IUser, DB };
