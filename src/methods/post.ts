@@ -1,12 +1,11 @@
 import { v4 as uuidv4 } from 'uuid';
-import users from '../data/data.json' assert { type: 'json' };
 import { validate } from '../utils/helper.js';
 import userSchema from '../schema/schema.js';
 import fileRecorder from '../utils/fileRecorder.js';
 import parser from '../utils/parser.js';
 import { IUser } from '../utils/types.js';
 
-const postRequest = async (req, res) => {
+const postRequest = async (req, res, users) => {
   if (req.url === '/api/users') {
     const newUser = (await parser(req)) as IUser;
 
@@ -14,9 +13,7 @@ const postRequest = async (req, res) => {
 
     if (!errors.length) {
       const user = Object.assign(newUser, { id: uuidv4() });
-      console.log(user);
-
-      fileRecorder([...users, user]);
+      users.push(user);
 
       res.statusCode = 201;
       res.setHeader('Content-Type', 'application/json');

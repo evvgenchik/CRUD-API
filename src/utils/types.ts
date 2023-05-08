@@ -1,10 +1,10 @@
 interface IUser {
   id: string;
   username: string;
-  age: string;
+  age: number;
   hobbies: string[];
 }
 
-type DB = IUser[];
+type usersDB = IUser[];
 
-export { IUser, DB };
+export { IUser, usersDB };

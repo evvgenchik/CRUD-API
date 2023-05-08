@@ -1,7 +1,6 @@
-import users from '../data/data.json' assert { type: 'json' };
 import { parseUrl, isUuidCorrect } from '../utils/helper.js';
 
-const getRequest = (req, res) => {
+const getRequest = (req, res, users) => {
   const { baseUrl, id } = parseUrl(req.url);
 
   if (req.url === '/api/users') {
