@@ -51,6 +51,16 @@ const server = http.createServer((req, res) => {
     res.end();
   }
 });
+process.on('message', (msg) => {
+  console.log(`Message from master: ${msg}`);
+});
+server.on('message', (msg) => {
+  console.log(`Message from master: ${msg}`);
+});
+
+if (process.send) {
+  process.send('hello from worker with id: ');
+}
 
 server.listen(PORT, () => {
   console.log(`SERVER START ON ${PORT}`);
