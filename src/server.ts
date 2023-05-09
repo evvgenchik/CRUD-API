@@ -6,7 +6,15 @@ import putRequest from './methods/put.js';
 import deleteRequest from './methods/delete.js';
 import { usersDB } from './utils/types.js';
 dotenv.config();
+import cluster from 'cluster';
+import os from 'os';
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const cpuCount = os.cpus().length;
+
+const workersArr: { pid: number; port: number }[] = [];
 const PORT = process.env.PORT || 5001;
 
 const DB: usersDB = [
@@ -51,17 +59,30 @@ const server = http.createServer((req, res) => {
     res.end();
   }
 });
-process.on('message', (msg) => {
-  console.log(`Message from master: ${msg}`);
-});
-server.on('message', (msg) => {
-  console.log(`Message from master: ${msg}`);
-});
 
-if (process.send) {
-  process.send('hello from worker with id: ');
+if (cluster.isPrimary) {
+  for (let i = 0; i < cpuCount; i++) {
+    const port = +PORT + i + 1;
+    const worker = cluster.fork({ port });
+    workersArr.push({ pid: worker.process.pid!, port: port });
+    worker.send(`Hello Worker ${worker.id}`);
+    worker.on('message', function (message) {
+      console.log(message);
+    });
+  }
+} else if (cluster.isWorker) {
+  server.listen(PORT, () => {
+    console.log(`SERVER START ON ${'dop PORT'}`);
+    process.on('message', (msg) => {
+      console.log(`Message from master: ${msg}`);
+    });
+
+    if (process.send) {
+      process.send('hello from worker with id: ');
+    }
+  });
+} else {
+  server.listen(PORT, () => {
+    console.log(`SERVER START ON ${PORT}`);
+  });
 }
-
-server.listen(PORT, () => {
-  console.log(`SERVER START ON ${PORT}`);
-});

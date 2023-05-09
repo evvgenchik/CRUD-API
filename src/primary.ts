@@ -15,7 +15,7 @@ const workersArr: { pid: number; port: number }[] = [];
 if (cluster.isPrimary) {
   for (let i = 0; i < cpuCount; i++) {
     const port = 5000 + i;
-    const worker = cluster.fork();
+    const worker = cluster.fork({ port: port });
     workersArr.push({ pid: worker.process.pid!, port: port });
     worker.send(`Hello Worker ${worker.id}`);
     worker.on('message', function (message) {
