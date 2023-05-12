@@ -16,16 +16,13 @@ const putRequest = async (req, res, users) => {
 
         if (!errors.length) {
           const deletedUser = users.splice(userLookingIndx, 1)[0];
-          console.log(deletedUser);
 
           const user = Object.assign(newUser, { id: deletedUser.id });
-          console.log(user);
-
           users.push(user);
 
           res.statusCode = 200;
           res.setHeader('Content-Type', 'application/json');
-          res.write(JSON.stringify({ message: `user ${user.username} was successfully updated` }));
+          res.write(JSON.stringify({ user: user }));
           res.end();
         } else {
           res.statusCode = 400;

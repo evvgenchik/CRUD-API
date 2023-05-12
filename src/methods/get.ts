@@ -14,7 +14,7 @@ const getRequest = (req, res, users) => {
       if (userLooking) {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
-        res.write(JSON.stringify(userLooking));
+        res.write(JSON.stringify({ user: userLooking }));
         res.end();
       } else {
         res.statusCode = 404;

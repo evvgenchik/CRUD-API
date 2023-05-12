@@ -8,31 +8,28 @@ import { usersDB } from './utils/types.js';
 dotenv.config();
 import cluster from 'cluster';
 import os from 'os';
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
 const cpuCount = os.cpus().length;
 
 const workersArr: { pid: number; port: number }[] = [];
 const PORT = process.env.PORT || 5001;
 
 const DB: usersDB = [
-  {
-    username: 'zxc',
-    age: 23,
-    hobbies: ['code', 'gym'],
-    id: '4934517f-2978-4acd-b36c-9ecc2df06302',
-  },
-  {
-    username: 'zxczcxzcxzxczxcz',
-    age: 23,
-    hobbies: ['code', 'gym'],
-    id: '05d10bee-173f-421c-a91d-d64b70bcc55b',
-  },
+  // {
+  //   username: 'zxc',
+  //   age: 23,
+  //   hobbies: ['code', 'gym'],
+  //   id: '4934517f-2978-4acd-b36c-9ecc2df06302',
+  // },
+  // {
+  //   username: 'zxczcxzcxzxczxcz',
+  //   age: 23,
+  //   hobbies: ['code', 'gym'],
+  //   id: '05d10bee-173f-421c-a91d-d64b70bcc55b',
+  // },
 ];
 
-const server = http.createServer((req, res) => {
+export const server = http.createServer((req, res) => {
   try {
     switch (req.method) {
       case 'GET':
@@ -60,29 +57,36 @@ const server = http.createServer((req, res) => {
   }
 });
 
-if (cluster.isPrimary) {
-  for (let i = 0; i < cpuCount; i++) {
-    const port = +PORT + i + 1;
-    const worker = cluster.fork({ port });
-    workersArr.push({ pid: worker.process.pid!, port: port });
-    worker.send(`Hello Worker ${worker.id}`);
-    worker.on('message', function (message) {
-      console.log(message);
-    });
-  }
-} else if (cluster.isWorker) {
-  server.listen(PORT, () => {
-    console.log(`SERVER START ON ${'dop PORT'}`);
-    process.on('message', (msg) => {
-      console.log(`Message from master: ${msg}`);
-    });
+// if (cluster.isPrimary) {
+//   for (let i = 0; i < cpuCount; i++) {
+//     const port = +PORT + i;
+//     const worker = cluster.fork({ PORT: port });
+//     workersArr.push({ pid: worker.process.pid!, port: port });
+//     // worker.send(`Hello Worker ${worker.id}`);
+//     // worker.on('message', function (message) {
+//     //   console.log(message);
+//     // });
+//     worker.on('listening', function (message) {
+//       console.log(message);
+//     });
+//   }
+// } else if (cluster.isWorker) {
+//   server.listen(PORT, () => {
+//     //console.log(`SERVER START ON ${'dop PORT'}`);
+//     // process.on('message', (msg) => {
+//     //   console.log(`Message from master: ${msg}`);
+//     // });
+//     console.log(`SERVER START ON ${PORT}`);
 
-    if (process.send) {
-      process.send('hello from worker with id: ');
-    }
-  });
-} else {
-  server.listen(PORT, () => {
-    console.log(`SERVER START ON ${PORT}`);
-  });
-}
+//     if (process.send) {
+//       process.send('hello from worker with id: ');
+//     }
+//   });
+// } else {
+//   server.listen(PORT, () => {
+//     console.log(`SERVER START ON ${PORT}`);
+//   });
+// }
+server.listen(PORT, () => {
+  console.log(`SERVER START ON ${PORT}`);
+});
