@@ -83,3 +83,29 @@ describe('Incorrect crud operations. Add incorrect user and try to interact with
     await request(server).delete(`/api/users/1234`).expect(400, { message: "uuid isn't correct" });
   });
 });
+
+describe('Incorrect path. Try to add user on incorrect path and intaract with him', () => {
+  it('should return status code 404 and message that path incorrect', async () => {
+    await request(server)
+      .post('/api/wrong/path')
+      .send(newUser)
+      .expect(404, { message: 'Route not found' });
+  });
+
+  it('should return status code 404 and message that route not found', async () => {
+    await request(server)
+      .get(`/api/wrong`)
+      .expect(404, { title: 'Not found', message: 'Route not found' });
+  });
+
+  it('should return status code 404 and message that path incorrect', async () => {
+    await request(server)
+      .put(`/wrong/users/123`)
+      .send(newUserUpdated)
+      .expect(404, { message: 'Route not found' });
+  });
+
+  it('should return status code 404 and message that path incorrect', async () => {
+    await request(server).delete(`/wrong`).expect(404, { message: 'Route not found' });
+  });
+});
