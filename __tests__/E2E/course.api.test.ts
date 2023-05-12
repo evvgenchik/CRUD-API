@@ -60,3 +60,26 @@ describe('Correct crud operations', () => {
       .expect(404, { message: 'no user with this id' });
   });
 });
+
+describe('Incorrect crud operations. Add incorrect user and try to interact with him', () => {
+  it('should return status code 400 and message that body incorrect', async () => {
+    await request(server).post('/api/users').send({ username: 'incorrect' }).expect(400, {
+      message: 'field age is invalid. field hobbies is invalid.',
+    });
+  });
+
+  it('should return status code 400 and message that id incorrect', async () => {
+    await request(server).get(`/api/users/1234`).expect(400, { message: "uuid isn't correct" });
+  });
+
+  it("should return status code 400 and message that uuid isn't correct", async () => {
+    await request(server)
+      .put(`/api/users/123`)
+      .send(newUserUpdated)
+      .expect(400, { message: "uuid isn't correct" });
+  });
+
+  it("should return status code 400 and message that uuid isn't correct", async () => {
+    await request(server).delete(`/api/users/1234`).expect(400, { message: "uuid isn't correct" });
+  });
+});
