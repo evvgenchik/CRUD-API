@@ -7,7 +7,7 @@
   "scripts": {
     "start:dev": "npx nodemon",
     "start:prod": "npx tsc && node build/server.js",
-    "start:multi": "npx nodemon",
+    "start:multi": "cross-env MULTI=true npx nodemon",
     "test": "jest",
     "lint": "npx eslint ./src",
     "format": "npx eslint ./src --fix && prettier --write"

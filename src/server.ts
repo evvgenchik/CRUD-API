@@ -58,36 +58,35 @@ export const server = http.createServer((req, res) => {
   }
 });
 
-// if (cluster.isPrimary) {
-//   for (let i = 0; i < cpuCount; i++) {
-//     const port = +PORT + i;
-//     const worker = cluster.fork({ PORT: port });
-//     workersArr.push({ pid: worker.process.pid!, port: port });
-//     // worker.send(`Hello Worker ${worker.id}`);
-//     // worker.on('message', function (message) {
-//     //   console.log(message);
-//     // });
-//     worker.on('listening', function (message) {
-//       console.log(message);
-//     });
-//   }
-// } else if (cluster.isWorker) {
-//   server.listen(PORT, () => {
-//     //console.log(`SERVER START ON ${'dop PORT'}`);
-//     // process.on('message', (msg) => {
-//     //   console.log(`Message from master: ${msg}`);
-//     // });
-//     console.log(`SERVER START ON ${PORT}`);
+if (process.env.MULTI) {
+  if (cluster.isPrimary) {
+    for (let i = 0; i < cpuCount; i++) {
+      const port = +PORT + i;
+      const worker = cluster.fork({ PORT: port });
+      workersArr.push({ pid: worker.process.pid!, port: port });
+      // worker.send(`Hello Worker ${worker.id}`);
+      // worker.on('message', function (message) {
+      //   console.log(message);
+      // });
+      worker.on('listening', function (message) {
+        console.log(message);
+      });
+    }
+  } else if (cluster.isWorker) {
+    server.listen(PORT, () => {
+      //console.log(`SERVER START ON ${'dop PORT'}`);
+      // process.on('message', (msg) => {
+      //   console.log(`Message from master: ${msg}`);
+      // });
+      console.log(`SERVER START ON ${PORT}`);
 
-//     if (process.send) {
-//       process.send('hello from worker with id: ');
-//     }
-//   });
-// } else {
-//   server.listen(PORT, () => {
-//     console.log(`SERVER START ON ${PORT}`);
-//   });
-// }
-server.listen(PORT, () => {
-  console.log(`SERVER START ON ${PORT}`);
-});
+      if (process.send) {
+        process.send('hello from worker with id: ');
+      }
+    });
+  }
+} else {
+  server.listen(PORT, () => {
+    console.log(`SERVER START ON ${PORT}`);
+  });
+}
