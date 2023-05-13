@@ -1,9 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
 import { validate } from '../utils/helper.js';
 import userSchema from '../schema/schema.js';
-import fileRecorder from '../utils/fileRecorder.js';
 import parser from '../utils/parser.js';
 import { IUser } from '../utils/types.js';
+import errorsMsg from '../utils/errorsMsg.js';
 
 const postRequest = async (req, res, users) => {
   if (req.url === '/api/users') {
@@ -26,7 +26,7 @@ const postRequest = async (req, res, users) => {
     }
   } else {
     res.writeHead(404, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ message: 'Route not found' }));
+    res.end(JSON.stringify({ message: errorsMsg.path }));
   }
 };
 

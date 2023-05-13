@@ -8,6 +8,7 @@ import { usersDB } from './utils/types.js';
 dotenv.config();
 import cluster from 'cluster';
 import os from 'os';
+import errorsMsg from './utils/errorsMsg.js';
 
 const cpuCount = os.cpus().length;
 
@@ -47,7 +48,7 @@ export const server = http.createServer((req, res) => {
       default:
         res.statusCode = 404;
         res.setHeader('Content-Type', 'application/json');
-        res.write(JSON.stringify({ title: 'No such endpoint', message: 'Route not found' }));
+        res.write(JSON.stringify({ message: errorsMsg.path }));
         res.end();
     }
   } catch (err) {

@@ -1,5 +1,6 @@
 import request from 'supertest';
 import { server } from '../../src/server';
+import errorsMsg from '../../src/utils/errorsMsg';
 
 const newUser = {
   username: 'User',
@@ -55,9 +56,7 @@ describe('Correct crud operations', () => {
   });
 
   it("should return status code 404 and message that user doesn'n exists", async () => {
-    await request(server)
-      .get(`/api/users/${createdId}`)
-      .expect(404, { message: 'no user with this id' });
+    await request(server).get(`/api/users/${createdId}`).expect(404, { message: errorsMsg.user });
   });
 });
 
@@ -69,18 +68,18 @@ describe('Incorrect crud operations. Add incorrect user and try to interact with
   });
 
   it('should return status code 400 and message that id incorrect', async () => {
-    await request(server).get(`/api/users/1234`).expect(400, { message: "uuid isn't correct" });
+    await request(server).get(`/api/users/1234`).expect(400, { message: errorsMsg.id });
   });
 
   it("should return status code 400 and message that uuid isn't correct", async () => {
     await request(server)
       .put(`/api/users/123`)
       .send(newUserUpdated)
-      .expect(400, { message: "uuid isn't correct" });
+      .expect(400, { message: errorsMsg.id });
   });
 
   it("should return status code 400 and message that uuid isn't correct", async () => {
-    await request(server).delete(`/api/users/1234`).expect(400, { message: "uuid isn't correct" });
+    await request(server).delete(`/api/users/1234`).expect(400, { message: errorsMsg.id });
   });
 });
 
@@ -89,23 +88,21 @@ describe('Incorrect path. Try to add user on incorrect path and intaract with hi
     await request(server)
       .post('/api/wrong/path')
       .send(newUser)
-      .expect(404, { message: 'Route not found' });
+      .expect(404, { message: errorsMsg.path });
   });
 
   it('should return status code 404 and message that route not found', async () => {
-    await request(server)
-      .get(`/api/wrong`)
-      .expect(404, { title: 'Not found', message: 'Route not found' });
+    await request(server).get(`/api/wrong`).expect(404, { message: errorsMsg.path });
   });
 
   it('should return status code 404 and message that path incorrect', async () => {
     await request(server)
       .put(`/wrong/users/123`)
       .send(newUserUpdated)
-      .expect(404, { message: 'Route not found' });
+      .expect(404, { message: errorsMsg.path });
   });
 
   it('should return status code 404 and message that path incorrect', async () => {
-    await request(server).delete(`/wrong`).expect(404, { message: 'Route not found' });
+    await request(server).delete(`/wrong`).expect(404, { message: errorsMsg.path });
   });
 });
