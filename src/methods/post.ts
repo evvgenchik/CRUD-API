@@ -8,6 +8,7 @@ import errorsMsg from '../utils/errorsMsg.js';
 const postRequest = async (req, res, users) => {
   if (req.url === '/api/users') {
     const newUser = (await parser(req)) as IUser;
+    console.log(newUser);
 
     const errors = validate(newUser, userSchema);
 

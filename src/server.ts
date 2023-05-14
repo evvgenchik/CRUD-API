@@ -9,28 +9,38 @@ dotenv.config();
 import cluster from 'cluster';
 import os from 'os';
 import errorsMsg from './utils/errorsMsg.js';
+import { serverPrimary } from './primaryServer.js';
 
 const cpuCount = os.cpus().length;
 
 const workersArr: { pid: number; port: number }[] = [];
 const PORT = process.env.PORT || 5001;
+const pid = process.pid;
 
+const newUser = {
+  username: 'User',
+  age: 20,
+  hobbies: ['code'],
+};
 const DB: usersDB = [
-  // {
-  //   username: 'zxc',
-  //   age: 23,
-  //   hobbies: ['code', 'gym'],
-  //   id: '4934517f-2978-4acd-b36c-9ecc2df06302',
-  // },
-  // {
-  //   username: 'zxczcxzcxzxczxcz',
-  //   age: 23,
-  //   hobbies: ['code', 'gym'],
-  //   id: '05d10bee-173f-421c-a91d-d64b70bcc55b',
-  // },
+  {
+    username: 'zxc',
+    age: 23,
+    hobbies: ['code', 'gym'],
+    id: '4934517f-2978-4acd-b36c-9ecc2df06302',
+  },
+  {
+    username: 'zxczcxzcxzxczxcz',
+    age: 23,
+    hobbies: ['code', 'gym'],
+    id: '05d10bee-173f-421c-a91d-d64b70bcc55b',
+  },
 ];
 
 export const server = http.createServer((req, res) => {
+  // const dbJson = (await bdRequest()) as string;
+  // const DB = JSON.parse(dbJson);
+
   try {
     switch (req.method) {
       case 'GET':
@@ -61,28 +71,18 @@ export const server = http.createServer((req, res) => {
 if (process.env.MULTI) {
   if (cluster.isPrimary) {
     for (let i = 0; i < cpuCount; i++) {
-      const port = +PORT + i;
+      const port = +PORT + i + 1;
       const worker = cluster.fork({ PORT: port });
       workersArr.push({ pid: worker.process.pid!, port: port });
-      // worker.send(`Hello Worker ${worker.id}`);
-      // worker.on('message', function (message) {
-      //   console.log(message);
-      // });
-      worker.on('listening', function (message) {
-        console.log(message);
-      });
     }
-  } else if (cluster.isWorker) {
-    server.listen(PORT, () => {
-      //console.log(`SERVER START ON ${'dop PORT'}`);
-      // process.on('message', (msg) => {
-      //   console.log(`Message from master: ${msg}`);
-      // });
-      console.log(`SERVER START ON ${PORT}`);
 
-      if (process.send) {
-        process.send('hello from worker with id: ');
-      }
+    serverPrimary.listen(4000, () => {
+      console.log(`PRIMARY SERVER START ON`);
+    });
+  } else if (cluster.isWorker) {
+    console.log(`Child pid: ${pid}`);
+    server.listen(PORT, () => {
+      console.log(`SERVER START ON ${PORT}`);
     });
   }
 } else {
