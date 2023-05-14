@@ -1,45 +1,59 @@
 import http from 'http';
 import parser from './utils/parser.js';
 
-export const serverPrimary = http.createServer(async (req, res) => {
-  const { url, method } = req;
-  const options = {
-    port: 4001,
-    path: url,
-    method: method,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  };
+export const startPrimary = (workersArr: { pid: number; port: number }[]) => {
+  const serverPrimary = http.createServer(async (req, res) => {
+    const { url: path, method, headers } = req;
+    const currentWorker = workersArr.shift() as { pid: number; port: number };
+    workersArr.push(currentWorker);
+    console.log(currentWorker.port);
 
-  try {
-    const proxyReq = http.request(options, (response) => {
-      response.setEncoding('utf8');
-      const users = [] as any[];
-      response.on('data', function (chunk) {
-        users.push(chunk);
+    const options = {
+      port: currentWorker.port,
+      path,
+      method,
+      headers,
+    };
+
+    try {
+      const proxyReq = http.request(options, (response) => {
+        response.setEncoding('utf8');
+        const users = [] as any[];
+        response.on('data', function (chunk) {
+          const user = JSON.parse(chunk);
+          users.push(user);
+        });
+        response.on('end', function () {
+          res.statusCode = 200;
+          res.setHeader('Content-Type', 'application/json');
+          console.log(users);
+          res.write(JSON.stringify(users));
+          res.end();
+        });
       });
-      response.on('end', function () {
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'application/json');
-        res.write(JSON.stringify({ user: users }));
-        res.end();
+
+      proxyReq.on('error', (e) => {
+        console.error(`problem with request: ${e.message}`);
       });
-    });
 
-    proxyReq.on('error', (e) => {
-      console.error(`problem with request: ${e.message}`);
-    });
+      if (method === 'POST') {
+        console.log('br');
 
-    if (method === 'POST') {
-      const body = await parser(req);
-      proxyReq.write(JSON.stringify(body));
+        const body = await parser(req);
+        console.log('body ' + body);
+
+        proxyReq.write(JSON.stringify(body));
+      }
+
+      proxyReq.end();
+    } catch (err) {
+      res.statusCode = 500;
+      res.write(JSON.stringify({ message: 'Server error' }));
+      res.end();
     }
+  });
 
-    proxyReq.end();
-  } catch (err) {
-    res.statusCode = 500;
-    res.write(JSON.stringify({ message: 'Server error' }));
-    res.end();
-  }
-});
+  serverPrimary.listen(4000, () => {
+    console.log(`PRIMARY SERVER START ON 4000`);
+  });
+};

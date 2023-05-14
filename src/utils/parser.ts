@@ -8,6 +8,9 @@ const parser = (req) => {
       rej(err);
     });
     req.on('end', () => {
+      console.log('data ' + data);
+      console.log('dataParsed ' + JSON.parse(data));
+
       res(JSON.parse(data));
     });
   });

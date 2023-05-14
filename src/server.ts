@@ -9,7 +9,7 @@ dotenv.config();
 import cluster from 'cluster';
 import os from 'os';
 import errorsMsg from './utils/errorsMsg.js';
-import { serverPrimary } from './primaryServer.js';
+import { startPrimary } from './primaryServer.js';
 
 const cpuCount = os.cpus().length;
 
@@ -70,15 +70,14 @@ export const server = http.createServer((req, res) => {
 
 if (process.env.MULTI) {
   if (cluster.isPrimary) {
-    for (let i = 0; i < cpuCount; i++) {
+    for (let i = 0; i < 3; i++) {
       const port = +PORT + i + 1;
       const worker = cluster.fork({ PORT: port });
       workersArr.push({ pid: worker.process.pid!, port: port });
     }
 
-    serverPrimary.listen(4000, () => {
-      console.log(`PRIMARY SERVER START ON`);
-    });
+    workersArr.sort((a, b) => a.port - b.port);
+    startPrimary(workersArr);
   } else if (cluster.isWorker) {
     console.log(`Child pid: ${pid}`);
     server.listen(PORT, () => {

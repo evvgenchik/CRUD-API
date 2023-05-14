@@ -4,8 +4,6 @@ import { parseUrl, isUuidCorrect } from '../utils/helper.js';
 const getRequest = (req, res, users) => {
   const { baseUrl, id } = parseUrl(req.url);
   if (req.url === '/api/users') {
-    console.log('br');
-
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
     res.write(JSON.stringify(users));
