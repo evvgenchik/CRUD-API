@@ -10,6 +10,7 @@ import cluster from 'cluster';
 import os from 'os';
 import errorsMsg from './utils/errorsMsg.js';
 import { startPrimary } from './primaryServer.js';
+import { bdRequest, bdPost, dbServer } from './db/dbServer.js';
 
 const cpuCount = os.cpus().length;
 
@@ -22,38 +23,43 @@ const newUser = {
   age: 20,
   hobbies: ['code'],
 };
-const DB: usersDB = [
-  {
-    username: 'zxc',
-    age: 23,
-    hobbies: ['code', 'gym'],
-    id: '4934517f-2978-4acd-b36c-9ecc2df06302',
-  },
-  {
-    username: 'zxczcxzcxzxczxcz',
-    age: 23,
-    hobbies: ['code', 'gym'],
-    id: '05d10bee-173f-421c-a91d-d64b70bcc55b',
-  },
-];
+// const DB: usersDB = [
+//   {
+//     username: 'zxc',
+//     age: 23,
+//     hobbies: ['code', 'gym'],
+//     id: '4934517f-2978-4acd-b36c-9ecc2df06302',
+//   },
+//   {
+//     username: 'zxczcxzcxzxczxcz',
+//     age: 23,
+//     hobbies: ['code', 'gym'],
+//     id: '05d10bee-173f-421c-a91d-d64b70bcc55b',
+//   },
+// ];
 
-export const server = http.createServer((req, res) => {
-  // const dbJson = (await bdRequest()) as string;
-  // const DB = JSON.parse(dbJson);
+export const server = http.createServer(async (req, res) => {
+  const dbJson = (await bdRequest()) as string;
+  const DB = JSON.parse(dbJson);
 
   try {
     switch (req.method) {
       case 'GET':
-        getRequest(req, res, DB);
+        await getRequest(req, res, DB);
         break;
       case 'POST':
-        postRequest(req, res, DB);
+        await postRequest(req, res, DB);
+        bdPost(DB);
+        console.log('DB1 ' + DB);
+
         break;
       case 'PUT':
         putRequest(req, res, DB);
+        bdPost(DB);
         break;
       case 'DELETE':
         deleteRequest(req, res, DB);
+        bdPost(DB);
         break;
       default:
         res.statusCode = 404;
@@ -78,6 +84,10 @@ if (process.env.MULTI) {
 
     workersArr.sort((a, b) => a.port - b.port);
     startPrimary(workersArr);
+
+    dbServer.listen(4999, () => {
+      console.log(`DB SERVER START ON 4999`);
+    });
   } else if (cluster.isWorker) {
     console.log(`Child pid: ${pid}`);
     server.listen(PORT, () => {

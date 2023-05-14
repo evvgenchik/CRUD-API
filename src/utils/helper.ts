@@ -13,13 +13,8 @@ const isUuidCorrect = (id: string) => {
 };
 
 const validate = (object, schema) => {
-  console.log('validate ' + object);
-  console.log(JSON.stringify(object));
-
   return Object.keys(schema)
     .filter((key) => {
-      console.log(object[key]);
-
       return !schema[key](object[key]);
     })
     .map((key) => `field ${key} is invalid.`);
