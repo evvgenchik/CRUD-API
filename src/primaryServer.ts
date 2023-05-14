@@ -9,10 +9,12 @@ export const startPrimary = (workersArr: { pid: number; port: number }[]) => {
     console.log(currentWorker.port);
 
     const options = {
-      port: currentWorker.port,
+      port: 4001,
       path,
       method,
-      headers,
+      headers: {
+        'Content-Type': 'application/json',
+      },
     };
 
     try {
@@ -26,7 +28,6 @@ export const startPrimary = (workersArr: { pid: number; port: number }[]) => {
         response.on('end', function () {
           res.statusCode = 200;
           res.setHeader('Content-Type', 'application/json');
-          console.log(users);
           res.write(JSON.stringify(users));
           res.end();
         });
@@ -37,12 +38,10 @@ export const startPrimary = (workersArr: { pid: number; port: number }[]) => {
       });
 
       if (method === 'POST') {
-        console.log('br');
-
         const body = await parser(req);
-        console.log('body ' + body);
 
         proxyReq.write(JSON.stringify(body));
+        proxyReq.end();
       }
 
       proxyReq.end();
