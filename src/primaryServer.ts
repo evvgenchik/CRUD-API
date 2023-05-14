@@ -9,7 +9,7 @@ export const startPrimary = (workersArr: { pid: number; port: number }[]) => {
     console.log(currentWorker.port);
 
     const options = {
-      port: 4001,
+      port: currentWorker.port,
       path,
       method,
       headers: {
@@ -37,11 +37,10 @@ export const startPrimary = (workersArr: { pid: number; port: number }[]) => {
         console.error(`problem with request: ${e.message}`);
       });
 
-      if (method === 'POST') {
+      if (method === 'POST' || method === 'PUT') {
         const body = await parser(req);
 
         proxyReq.write(JSON.stringify(body));
-        proxyReq.end();
       }
 
       proxyReq.end();
