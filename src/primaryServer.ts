@@ -1,12 +1,12 @@
 import http from 'http';
 import parser from './utils/parser.js';
+import { UsersDB } from './utils/types.js';
 
-export const startPrimary = (workersArr: { pid: number; port: number }[]) => {
+const startPrimary = (workersArr: { workerPid: number; port: number }[]) => {
   const serverPrimary = http.createServer(async (req, res) => {
-    const { url: path, method, headers } = req;
-    const currentWorker = workersArr.shift() as { pid: number; port: number };
+    const { url: path, method } = req;
+    const currentWorker = workersArr.shift() as { workerPid: number; port: number };
     workersArr.push(currentWorker);
-    console.log(currentWorker.port);
 
     const options = {
       port: currentWorker.port,
@@ -20,12 +20,12 @@ export const startPrimary = (workersArr: { pid: number; port: number }[]) => {
     try {
       const proxyReq = http.request(options, (response) => {
         response.setEncoding('utf8');
-        const users = [] as any[];
-        response.on('data', function (chunk) {
+        const users = [] as UsersDB;
+        response.on('data', (chunk) => {
           const user = JSON.parse(chunk);
           users.push(user);
         });
-        response.on('end', function () {
+        response.on('end', () => {
           res.statusCode = 200;
           res.setHeader('Content-Type', 'application/json');
           res.write(JSON.stringify(users));
@@ -55,3 +55,5 @@ export const startPrimary = (workersArr: { pid: number; port: number }[]) => {
     console.log(`PRIMARY SERVER START ON 4000`);
   });
 };
+
+export default startPrimary;

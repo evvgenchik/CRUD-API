@@ -1,29 +1,29 @@
 import http from 'http';
-import { usersDB } from '../utils/types.js';
+import { UsersDB } from '../utils/types.js';
 
-let DB: usersDB = [];
+let DB: UsersDB = [];
 
 const bdRequest = async () => {
-  let DB: any[] = [];
-  return new Promise((resolve, reject) => {
+  const data: UsersDB = [];
+  return new Promise((resolve) => {
     http.get('http://localhost:4999', (res) => {
       res.setEncoding('utf8');
 
       res
         .on('data', (chunk) => {
-          DB.push(chunk);
+          data.push(chunk);
 
           res.on('end', () => {
-            resolve(DB);
+            resolve(data);
           });
         })
         .on('error', (err) => {
-          console.log('Error: ');
+          console.log(`Error:   ${err}`);
         });
     });
   });
 };
-const bdPost = async (DB) => {
+const bdPost = async (users: UsersDB) => {
   const options = {
     port: 4999,
     method: 'POST',
@@ -32,8 +32,8 @@ const bdPost = async (DB) => {
     },
   };
 
-  const req = http.request(options, (res) => {});
-  req.write(JSON.stringify(DB));
+  const req = http.request(options);
+  req.write(JSON.stringify(users));
 };
 
 const dbServer = http.createServer((req, res) => {

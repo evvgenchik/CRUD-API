@@ -1,6 +1,6 @@
 import request from 'supertest';
-import { server } from '../../src/server';
-import errorsMsg from '../../src/utils/errorsMsg';
+import server from '../server.js';
+import errorsMsg from '../utils/errorsMsg.js';
 
 const newUser = {
   username: 'User',
@@ -13,8 +13,9 @@ const newUserUpdated = {
   hobbies: ['code'],
 };
 
-afterAll(() => {
+afterAll((done) => {
   server.close();
+  done();
 });
 
 describe('Correct crud operations', () => {

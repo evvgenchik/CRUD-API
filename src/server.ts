@@ -1,24 +1,23 @@
 import http from 'http';
 import * as dotenv from 'dotenv';
+import os from 'os';
+import cluster from 'cluster';
 import getRequest from './methods/get.js';
 import postRequest from './methods/post.js';
 import putRequest from './methods/put.js';
 import deleteRequest from './methods/delete.js';
-import { usersDB } from './utils/types.js';
-dotenv.config();
-import cluster from 'cluster';
-import os from 'os';
 import errorsMsg from './utils/errorsMsg.js';
-import { startPrimary } from './primaryServer.js';
+import startPrimary from './primaryServer.js';
 import { bdRequest, bdPost, dbServer } from './db/dbServer.js';
 
-const cpuCount = os.cpus().length;
+dotenv.config();
 
-const workersArr: { pid: number; port: number }[] = [];
+const workersArr: { workerPid: number; port: number }[] = [];
 const PORT = process.env.PORT || 5001;
-const pid = process.pid;
+const { pid } = process;
+const cpusLength = os.cpus().length;
 
-export const server = http.createServer(async (req, res) => {
+const server = http.createServer(async (req, res) => {
   const dbJson = (await bdRequest()) as string;
   const DB = JSON.parse(dbJson);
 
@@ -33,7 +32,6 @@ export const server = http.createServer(async (req, res) => {
         break;
       case 'PUT':
         await putRequest(req, res, DB);
-        console.dir(DB);
         bdPost(DB);
         break;
       case 'DELETE':
@@ -55,18 +53,18 @@ export const server = http.createServer(async (req, res) => {
 
 if (process.env.MULTI) {
   if (cluster.isPrimary) {
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < cpusLength; i++) {
       const port = +PORT + i + 1;
       const worker = cluster.fork({ PORT: port });
-      workersArr.push({ pid: worker.process.pid!, port: port });
+      const workerPid = worker.process.pid as number;
+      workersArr.push({ workerPid, port });
     }
 
     workersArr.sort((a, b) => a.port - b.port);
-    startPrimary(workersArr);
-
     dbServer.listen(4999, () => {
       console.log(`DB SERVER START ON 4999`);
     });
+    startPrimary(workersArr);
   } else if (cluster.isWorker) {
     console.log(`Child pid: ${pid}`);
     server.listen(PORT, () => {
@@ -74,7 +72,17 @@ if (process.env.MULTI) {
     });
   }
 } else {
+  dbServer.listen(4999, () => {
+    console.log(`DB SERVER START ON 4999`);
+  });
   server.listen(PORT, () => {
     console.log(`SERVER START ON ${PORT}`);
   });
 }
+
+process.on('SIGINT', () => {
+  server.close(() => process.exit());
+  dbServer.close(() => process.exit());
+});
+
+export default server;

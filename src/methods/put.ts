@@ -23,7 +23,7 @@ const putRequest = async (req, res, users) => {
 
           res.statusCode = 200;
           res.setHeader('Content-Type', 'application/json');
-          res.write(JSON.stringify({ user: user }));
+          res.write(JSON.stringify({ user }));
           res.end();
         } else {
           res.statusCode = 400;
