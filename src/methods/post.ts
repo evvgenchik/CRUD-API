@@ -1,11 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
+import { IncomingMessage, ServerResponse } from 'http';
 import { validate } from '../utils/helper.js';
 import userSchema from '../schema/schema.js';
 import parser from '../utils/parser.js';
-import { IUser } from '../utils/types.js';
+import { IUser, UsersDB } from '../utils/types.js';
 import errorsMsg from '../utils/errorsMsg.js';
 
-const postRequest = async (req, res, users) => {
+const postRequest = async (req: IncomingMessage, res: ServerResponse, users: UsersDB) => {
   if (req.url === '/api/users') {
     const newUser = (await parser(req)) as IUser;
 

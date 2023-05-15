@@ -1,7 +1,7 @@
 const userSchema = {
-  username: (value) => typeof value === 'string',
-  age: (value) => typeof value === 'number',
-  hobbies: (value) => Array.isArray(value),
+  username: (value: string) => typeof value === 'string',
+  age: (value: number) => typeof value === 'number',
+  hobbies: (value: []) => Array.isArray(value),
 };
 
 export default userSchema;

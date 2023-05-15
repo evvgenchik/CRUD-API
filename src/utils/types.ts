@@ -7,4 +7,10 @@ interface IUser {
 
 type UsersDB = IUser[];
 
-export { IUser, UsersDB };
+type UserSchema = {
+  username: (value: any) => boolean;
+  age: (value: any) => boolean;
+  hobbies: (value: any) => boolean;
+};
+
+export { IUser, UsersDB, UserSchema };

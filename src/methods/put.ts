@@ -1,11 +1,12 @@
+import { IncomingMessage, ServerResponse } from 'http';
+import { UsersDB, IUser } from '../utils/types.js';
 import { isUuidCorrect, parseUrl, validate } from '../utils/helper.js';
 import userSchema from '../schema/schema.js';
 import parser from '../utils/parser.js';
-import { IUser } from '../utils/types.js';
 import errorsMsg from '../utils/errorsMsg.js';
 
-const putRequest = async (req, res, users) => {
-  const { baseUrl, id } = parseUrl(req.url);
+const putRequest = async (req: IncomingMessage, res: ServerResponse, users: UsersDB) => {
+  const { baseUrl, id } = parseUrl(req);
 
   if (baseUrl === '/api/users') {
     if (isUuidCorrect(id)) {

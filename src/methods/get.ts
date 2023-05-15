@@ -1,8 +1,11 @@
+import { IncomingMessage, ServerResponse } from 'http';
+import { UsersDB } from '../utils/types.js';
 import errorsMsg from '../utils/errorsMsg.js';
 import { parseUrl, isUuidCorrect } from '../utils/helper.js';
 
-const getRequest = async (req, res, users) => {
-  const { baseUrl, id } = parseUrl(req.url);
+const getRequest = async (req: IncomingMessage, res: ServerResponse, users: UsersDB) => {
+  const { baseUrl, id } = parseUrl(req);
+
   if (req.url === '/api/users') {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');

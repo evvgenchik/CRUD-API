@@ -1,4 +1,6 @@
-const parser = (req) => {
+import { IncomingMessage } from 'http';
+
+const parser = (req: IncomingMessage) => {
   return new Promise((res, rej) => {
     let data = '';
     req.on('data', (chunk) => {

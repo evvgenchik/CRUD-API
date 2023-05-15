@@ -1,8 +1,10 @@
+import { IncomingMessage, ServerResponse } from 'http';
+import { UsersDB } from '../utils/types.js';
 import errorsMsg from '../utils/errorsMsg.js';
 import { isUuidCorrect, parseUrl } from '../utils/helper.js';
 
-const deleteRequest = async (req, res, users) => {
-  const { baseUrl, id } = parseUrl(req.url);
+const deleteRequest = async (req: IncomingMessage, res: ServerResponse, users: UsersDB) => {
+  const { baseUrl, id } = parseUrl(req);
 
   if (baseUrl === '/api/users') {
     if (isUuidCorrect(id)) {
