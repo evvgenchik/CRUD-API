@@ -1,6 +1,11 @@
 import http from 'http';
+import * as dotenv from 'dotenv';
 import parser from './utils/parser.js';
 import { UsersDB } from './utils/types.js';
+
+dotenv.config();
+
+const PORT = process.env.PORT || 5001;
 
 const startPrimary = (workersArr: { workerPid: number; port: number }[]) => {
   const serverPrimary = http.createServer(async (req, res) => {
@@ -26,6 +31,7 @@ const startPrimary = (workersArr: { workerPid: number; port: number }[]) => {
           users.push(user);
         });
         response.on('end', () => {
+          console.log(`Response received from the port: ${currentWorker.port}`);
           res.statusCode = 200;
           res.setHeader('Content-Type', 'application/json');
           res.write(JSON.stringify(users));
@@ -51,8 +57,8 @@ const startPrimary = (workersArr: { workerPid: number; port: number }[]) => {
     }
   });
 
-  serverPrimary.listen(4000, () => {
-    console.log(`PRIMARY SERVER START ON 4000`);
+  serverPrimary.listen(PORT, () => {
+    console.log(`PRIMARY SERVER START ON ${PORT}`);
   });
 };
 

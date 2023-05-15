@@ -62,7 +62,9 @@ npm run start:multi
 
 ```
 
-In response you can watch which worker who response in this time on the request.
+In response you can watch which worker who response in this time on the request:
+"Response received from the port: №."
+
 
 ## 🔌 API
 
@@ -100,4 +102,9 @@ Implemented endpoint: `api/users`
 - `username` — user's name (string, **required**)
 - `age` — user's age (number, **required**)
 - `hobbies` — user's hobbies (array of strings or empty array, **required**)
+
+```
+
+```
+
 ```
