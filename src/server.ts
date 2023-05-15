@@ -18,26 +18,6 @@ const workersArr: { pid: number; port: number }[] = [];
 const PORT = process.env.PORT || 5001;
 const pid = process.pid;
 
-const newUser = {
-  username: 'User',
-  age: 20,
-  hobbies: ['code'],
-};
-// const DB: usersDB = [
-//   {
-//     username: 'zxc',
-//     age: 23,
-//     hobbies: ['code', 'gym'],
-//     id: '4934517f-2978-4acd-b36c-9ecc2df06302',
-//   },
-//   {
-//     username: 'zxczcxzcxzxczxcz',
-//     age: 23,
-//     hobbies: ['code', 'gym'],
-//     id: '05d10bee-173f-421c-a91d-d64b70bcc55b',
-//   },
-// ];
-
 export const server = http.createServer(async (req, res) => {
   const dbJson = (await bdRequest()) as string;
   const DB = JSON.parse(dbJson);
@@ -50,15 +30,14 @@ export const server = http.createServer(async (req, res) => {
       case 'POST':
         await postRequest(req, res, DB);
         bdPost(DB);
-        console.log('DB1 ' + DB);
-
         break;
       case 'PUT':
-        putRequest(req, res, DB);
+        await putRequest(req, res, DB);
+        console.dir(DB);
         bdPost(DB);
         break;
       case 'DELETE':
-        deleteRequest(req, res, DB);
+        await deleteRequest(req, res, DB);
         bdPost(DB);
         break;
       default:

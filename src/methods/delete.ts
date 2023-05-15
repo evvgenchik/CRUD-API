@@ -1,7 +1,7 @@
 import errorsMsg from '../utils/errorsMsg.js';
 import { isUuidCorrect, parseUrl } from '../utils/helper.js';
 
-const deleteRequest = (req, res, users) => {
+const deleteRequest = async (req, res, users) => {
   const { baseUrl, id } = parseUrl(req.url);
 
   if (baseUrl === '/api/users') {
